@@ -1,9 +1,34 @@
 <template>
   <v-container>
     <v-row align="center">
-      <v-col>
+      <v-col cols="12">
         <div class="title">
           <h2>全台水域地點</h2>
+        </div>
+      </v-col>
+      <v-col cols="12">
+        <v-card>
+          <v-list-item>
+            <v-list-item-content>
+              <v-chip-group
+                active-class="primary white--text"
+                column
+              >
+                <v-chip>海水浴場</v-chip>
+                <v-chip>浮潛</v-chip>
+                <v-chip>港口</v-chip>
+                <v-chip>海釣</v-chip>
+                <v-chip>衝浪</v-chip>
+                <v-chip>娛樂漁業</v-chip>
+              </v-chip-group>
+            </v-list-item-content>
+          </v-list-item>
+        </v-card>
+      </v-col>
+      <v-col>
+        <div class="text-overline" style="display: flex; alignItem: center; float: right">
+          <img :src="markRed" width="32" height="32">
+          危險水域
         </div>
       </v-col>
     </v-row>
@@ -15,13 +40,13 @@
           :zoom="zoom"
           :center="center"
           :options="options"
-          style="height: 75vh; borderRadius: 20px"
+          style="height: 50vh; borderRadius: 20px"
         >
           <!-- 載入圖資 -->
           <l-tile-layer :url="url" :attribution="attribution" />
 
           <!-- 創建標記點 -->
-          <l-marker :lat-lng="item.local" v-for="item in data" :key="item.id">
+          <l-marker :lat-lng="[item.Lat, item.Lon]" v-for="item in locationData" :key="item.id">
             <!-- 標記點樣式判斷 -->
             <l-icon
               :icon-url="icon.type.black"
@@ -44,20 +69,17 @@
 </template>
 
 <script>
-import LocationBlack from '../assets/icon_location_black_4x.png';
-import LocationRed from '../assets/icon_location_red_4x.png';
+import dangerLocations from "../../assets/constant/dangerLocations";
+
+import MarkBlack from '../../assets/icon_mark_black_4x.png';
+import MarkRed from '../../assets/icon_mark_red_4x.png';
 
 export default {
   name: "AED",
   data() {
     return {
-      // 模擬資料
-      data: [
-        { id: 1, name: "夢時代購物中心", local: [23.595153, 120.306923] },
-        { id: 2, name: "漢神百貨", local: [24.61942, 121.66386] },
-        { id: 3, name: "漢神巨蛋", local: [22.469603, 121.302288] },
-        { id: 4, name: "大統百貨", local: [22.630748, 120.318033] }
-      ],
+      locationData: [],
+      dangerLocations,
       
       zoom: 8,
       center: [23.97565, 120.9738819],
@@ -68,16 +90,24 @@ export default {
       },
       icon: {
         type: {
-          black: LocationBlack,
-          red: LocationRed,
+          black: MarkBlack,
+          red: MarkRed,
         },
         iconSize: [48, 48],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
-      }
+      },
+      markBlack: MarkBlack,
+      markRed: MarkRed,
     };
   },
-  mounted() {
+  async mounted() {
+    try {
+      const res = await this.$api.map.getLocations('海水浴場');
+      this.locationData = res.search_result;
+    } catch (err) {
+      console.log(err);
+    }
   }
 };
 </script>
@@ -85,5 +115,8 @@ export default {
 <style>
 .title {
   text-align: center;
+}
+.v-card {
+  border-radius: 20px !important;
 }
 </style>

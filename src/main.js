@@ -1,8 +1,10 @@
-import Vue from 'vue';
-import App from './App.vue';
-import router from './router';
-import store from './store';
-import vuetify from './plugins/vuetify';
+import Vue from "vue";
+import App from "./App.vue";
+import axios from "axios";
+import api from "./apis";
+import router from "./router";
+import store from "./store";
+import vuetify from "./plugins/vuetify";
 import "@fortawesome/fontawesome-free/css/all.css";
 import "@fortawesome/fontawesome-free/js/all.js";
 import moment from "moment";
@@ -30,6 +32,8 @@ Icon.Default.mergeOptions({
 });
 
 Vue.config.productionTip = false;
+Vue.prototype.$axios = axios;
+Vue.prototype.$api = api;
 Vue.prototype.$moment = moment;
 
 new Vue({
@@ -37,4 +41,4 @@ new Vue({
   store,
   vuetify,
   render: h => h(App)
-}).$mount('#app')
+}).$mount("#app")

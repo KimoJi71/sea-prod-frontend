@@ -21,7 +21,11 @@
           <l-tile-layer :url="url" :attribution="attribution" />
 
           <!-- 創建標記點 -->
-          <l-marker :lat-lng="item.local" v-for="item in data" :key="item.id">
+          <l-marker 
+            :lat-lng="[item.Lat, item.Lon]" 
+            v-for="item in AEDData" 
+            :key="item.id"
+          >
             <!-- 標記點樣式判斷 -->
             <l-icon
               :icon-url="icon.type"
@@ -31,10 +35,16 @@
             />
             <!-- 彈出視窗 -->
             <l-popup>
-              <h3>野柳地質公園</h3>
-              <p>地址：新北市萬里區野柳里港東路167-1號</p>
-              <p>平日營業時間：8:00 ~ 17:00</p>
-              <p>假日營業時間：8:00 ~ 17:00</p>
+              <h3>{{item.Location_name}}</h3>
+              <p>地址：{{item.Location_address}}</p>
+              <p>
+                平日營業時間：
+                {{item.Weekday_time ? `${item.Weekday_time.split('~')[0].slice(0, -3)} ~ ${item.Weekday_time.split('~')[1].slice(0, -3)}` : ''}}
+              </p>
+              <p>
+                假日營業時間：
+                {{item.Holiday_time ? `${item.Holiday_time.split('~')[0].slice(0, -3)} ~ ${item.Holiday_time.split('~')[1].slice(0, -3)}` : ''}}
+              </p>
             </l-popup>
           </l-marker>
         </l-map>
@@ -44,19 +54,13 @@
 </template>
 
 <script>
-import AED from '../assets/icon_AED_4x.png';
+import AED from '../../assets/icon_AED_4x.png';
 
 export default {
   name: "AED",
   data() {
     return {
-      // 模擬資料
-      data: [
-        { id: 1, name: "夢時代購物中心", local: [23.595153, 120.306923] },
-        { id: 2, name: "漢神百貨", local: [24.61942, 121.66386] },
-        { id: 3, name: "漢神巨蛋", local: [22.469603, 121.302288] },
-        { id: 4, name: "大統百貨", local: [22.630748, 120.318033] }
-      ],
+      AEDData: [],
       
       zoom: 8,
       center: [23.97565, 120.9738819],
@@ -67,14 +71,20 @@ export default {
       },
       icon: {
         type: AED,
-        iconSize: [48, 48],
+        iconSize: [36, 36],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
       }
     };
   },
-  mounted() {
-  }
+  async mounted() {
+    try {
+      const res = await this.$api.map.getAED();
+      this.AEDData = res.search_result;
+    } catch (err) {
+      console.log(err);
+    }
+  },
 };
 </script>
 

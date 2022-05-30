@@ -7,17 +7,17 @@ const routes = [
   {
     path: '/map/location',
     name: 'Location',
-    component: () => import('@/views/Location.vue'),
+    component: () => import('@/views/map/Location.vue'),
   },
   {
     path: '/map/water',
     name: 'Water',
-    component: () => import('@/views/Water.vue'),
+    component: () => import('@/views/map/Water.vue'),
   },
   {
     path: '/map/AED',
     name: 'AED',
-    component: () => import('@/views/AED.vue'),
+    component: () => import('@/views/map/AED.vue'),
   },
   {
     path: "*",
