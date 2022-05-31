@@ -7,25 +7,27 @@
         </div>
       </v-col>
       <v-col cols="12">
-        <v-card>
-          <v-list-item>
-            <v-list-item-content>
-              <v-chip-group
-                active-class="primary white--text"
-                column
-              >
-                <v-chip>海水浴場</v-chip>
-                <v-chip>浮潛</v-chip>
-                <v-chip>港口</v-chip>
-                <v-chip>海釣</v-chip>
-                <v-chip>衝浪</v-chip>
-                <v-chip>娛樂漁業</v-chip>
-              </v-chip-group>
-            </v-list-item-content>
-          </v-list-item>
-        </v-card>
+        <v-sheet
+          elevation="2"
+          class="py-3 px-6"
+          rounded="xl"
+        >
+          <v-chip-group
+            v-model="type"
+            mandatory
+            active-class="primary"
+          >
+            <v-chip
+              v-for="tag in tags"
+              :key="tag"
+              :value="tag"
+            >
+              {{tag}}
+            </v-chip>
+          </v-chip-group>
+        </v-sheet>
       </v-col>
-      <v-col>
+      <v-col v-show="type !== '沿海海面'">
         <div class="text-overline" style="display: flex; alignItem: center; float: right">
           <img :src="markRed" width="32" height="32">
           危險水域
@@ -33,33 +35,72 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
-        <!-- 初始化地圖設定 -->
+      <v-col v-if="type !== '沿海海面'">
         <l-map
           ref="location-map"
           :zoom="zoom"
           :center="center"
           :options="options"
-          style="height: 50vh; borderRadius: 20px"
+          style="height: 55vh; borderRadius: 20px"
         >
-          <!-- 載入圖資 -->
           <l-tile-layer :url="url" :attribution="attribution" />
 
-          <!-- 創建標記點 -->
-          <l-marker :lat-lng="[item.Lat, item.Lon]" v-for="item in locationData" :key="item.id">
-            <!-- 標記點樣式判斷 -->
+          <!-- 水域地點 -->
+          <l-marker
+            :lat-lng="[item.Lat, item.Lon]" 
+            v-for="item in locationData" 
+            :key="item.id"
+          >
             <l-icon
-              :icon-url="icon.type.black"
+              :icon-url="dangerLocations[type].includes(item.Observation_site) ? icon.type.red : icon.type.black"
               :icon-size="icon.iconSize"
               :icon-anchor="icon.iconAnchor"
               :popup-anchor="icon.popupAnchor"
             />
-            <!-- 彈出視窗 -->
             <l-popup>
-              <h3>野柳地質公園</h3>
-              <p>地址：新北市萬里區野柳里港東路167-1號</p>
-              <p>平日營業時間：8:00 ~ 17:00</p>
-              <p>假日營業時間：8:00 ~ 17:00</p>
+              <h3>{{item.Observation_site}}</h3>
+              <p>溫度：{{item.temperature}}</p>
+              <p>體感溫度：{{item.body_temperature}}</p>
+              <p>相對濕度：{{item.relative_humidity}}</p>
+              <p>降雨機率：{{item.Chance_of_rain}}</p>
+              <p>最大風速：{{item.Maximum_wind_speed}}</p>
+              <p>天氣現象：{{item.Weather_phenomenon}}</p>
+              <p>舒適度指數：{{item.Maximum_comfort_index}}</p>
+              <hr>
+              <p>日出日落時間：{{item.Sunrise}} / {{item.Sundown}}</p>
+            </l-popup>
+          </l-marker>
+        </l-map>
+      </v-col>
+
+      <v-col v-else>
+        <l-map
+          ref="location-map"
+          :zoom="zoom"
+          :center="center"
+          :options="options"
+          style="height: 65vh; borderRadius: 20px"
+        >
+          <l-tile-layer :url="url" :attribution="attribution" />
+
+          <!-- 水域地點 -->
+          <l-marker
+            :lat-lng="[item.Lat, item.Lon]" 
+            v-for="item in seaData" 
+            :key="item.id"
+          >
+            <l-icon
+              :icon-url="icon.type.sea"
+              :icon-size="icon.iconSize"
+              :icon-anchor="icon.iconAnchor"
+              :popup-anchor="icon.popupAnchor"
+            />
+            <l-popup>
+              <h3>{{item.Observation_site}}</h3>
+              <p>當日浪況：{{item.Wave_conditions}}</p>
+              <p>天氣現象：{{item.Weather_phenomeno}}</p>
+              <hr>
+              <p>日出日落時間：{{item.Sunrise}} / {{item.Sundown}}</p>
             </l-popup>
           </l-marker>
         </l-map>
@@ -71,14 +112,26 @@
 <script>
 import dangerLocations from "../../assets/constant/dangerLocations";
 
-import MarkBlack from '../../assets/icon_mark_black_4x.png';
-import MarkRed from '../../assets/icon_mark_red_4x.png';
+import MarkBlack from "../../assets/icon_mark_black_4x.png";
+import MarkRed from "../../assets/icon_mark_red_4x.png";
+import Sea from "../../assets/icon_sea_4x.png";
 
 export default {
   name: "AED",
   data() {
     return {
+      tags: [
+        "海水浴場",
+        "浮潛",
+        "港口",
+        "海釣",
+        "衝浪",
+        "娛樂漁業",
+        "沿海海面"
+      ],
+      type: "海水浴場",
       locationData: [],
+      seaData: [],
       dangerLocations,
       
       zoom: 8,
@@ -92,6 +145,7 @@ export default {
         type: {
           black: MarkBlack,
           red: MarkRed,
+          sea: Sea,
         },
         iconSize: [48, 48],
         iconAnchor: [12, 41],
@@ -101,9 +155,33 @@ export default {
       markRed: MarkRed,
     };
   },
+  methods: {
+    async getLocations(type) {
+      try {
+        const res = await this.$api.map.getLocations(type);
+        this.locationData = res.search_result;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getSeaLocations() {
+      try {
+        const res = await this.$api.map.getSeaLocations();
+        this.seaData = res.search_result;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+  },
+  watch: {
+    type(val) {
+      if (val !== "沿海海面") this.getLocations(val);
+      else this.getSeaLocations();
+    }
+  },
   async mounted() {
     try {
-      const res = await this.$api.map.getLocations('海水浴場');
+      const res = await this.$api.map.getLocations("海水浴場");
       this.locationData = res.search_result;
     } catch (err) {
       console.log(err);
@@ -115,8 +193,5 @@ export default {
 <style>
 .title {
   text-align: center;
-}
-.v-card {
-  border-radius: 20px !important;
 }
 </style>

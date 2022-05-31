@@ -1,5 +1,5 @@
 const dangerLocations = {
-  entertainment: [
+  "娛樂漁業": [
     "烏石",
     "大里",
     "梗枋",
@@ -38,7 +38,7 @@ const dangerLocations = {
     "永新",
     "中芸",
   ],
-  snorkeling: [
+  "浮潛": [
     "東澳漁港與龜吼漁港",
     "龍洞灣水域B區北側",
     "龍洞灣水域B區南側",
@@ -51,7 +51,7 @@ const dangerLocations = {
     "後灣",
     "柴口海域",
   ],
-  beach: [
+  "海水浴場": [
     "頭城",
     "磯崎",
     "墾丁",
@@ -65,7 +65,7 @@ const dangerLocations = {
     "龍洞灣公園",
     "馬沙溝"
   ],
-  fishing: [
+  "海釣": [
     "東澳粉鳥林漁港",
     "東澳烏石鼻",
     "東港南堤",
@@ -76,11 +76,11 @@ const dangerLocations = {
     "深澳",
     "三仙台",
   ],
-  port: [
+  "港口": [
     "高雄港",
     "布袋港",
   ],
-  surfing: [
+  "衝浪": [
     "東澳漁港與龜吼漁港間海域",
     "福隆鹽寮水域F區",
     "南灣",
