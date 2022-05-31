@@ -1,61 +1,68 @@
 <template>
   <v-container>
     <v-row align="center">
-      <v-col>
+      <v-col cols="12">
         <div class="title">
           <h2>全台水質監測</h2>
         </div>
       </v-col>
+      <v-col>
+        <div class="text-overline" style="display: flex; alignItem: center; float: right">
+          <img :src="redDot" width="32" height="32">
+          水質超標
+        </div>
+      </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col cols="12">
         <!-- 初始化地圖設定 -->
         <l-map
           ref="location-map"
           :zoom="zoom"
           :center="center"
           :options="options"
-          style="height: 75vh; borderRadius: 20px"
+          style="height: 60vh; borderRadius: 20px"
         >
           <!-- 載入圖資 -->
           <l-tile-layer :url="url" :attribution="attribution" />
 
           <!-- 創建標記點 -->
           <l-circle-marker 
-            :lat-lng="item.local" 
-            :radius="circle.radius"
-            :color="circle.color"
-            :fillColor="circle.fillColor"
-            :fillOpacity="circle.fillOpacity"
-            v-for="item in data" 
+            :lat-lng="[item.Lat, item.Lon]" 
+            :radius="item.Exceeded_items ? redCircle.radius: blueCircle.radius"
+            :color="item.Exceeded_items ? redCircle.color: blueCircle.color"
+            :fillColor="item.Exceeded_items ? redCircle.fillColor: blueCircle.fillColor"
+            :fillOpacity="item.Exceeded_items ? redCircle.fillOpacity: blueCircle.fillOpacity"
+            v-for="item in waterQualityData" 
             :key="item.id"
           >
             <!-- 彈出視窗 -->
             <l-popup>
-              <h3>野柳地質公園</h3>
-              <p>地址：新北市萬里區野柳里港東路167-1號</p>
-              <p>平日營業時間：8:00 ~ 17:00</p>
-              <p>假日營業時間：8:00 ~ 17:00</p>
+              <h3>{{item.Observation_site}}</h3>
+              <p>水質達成率：{{item.Achievement_rate}}</p>
+              <p>水質超標項目：{{item.Exceeded_items ? item.Exceeded_items : '無'}}</p>
             </l-popup>
           </l-circle-marker>
         </l-map>
+      </v-col>
+      <v-col>
+        <div class="text-body-2">
+          資料時間：{{waterQualityData[0] ? waterQualityData[0].Data_time: ''}}
+        </div>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import redDot from "../../assets/icon_dot_red_4x.png";
+
 export default {
   name: "AED",
   data() {
     return {
-      // 模擬資料
-      data: [
-        { id: 1, name: "夢時代購物中心", local: [23.595153, 120.306923] },
-        { id: 2, name: "漢神百貨", local: [24.61942, 121.66386] },
-        { id: 3, name: "漢神巨蛋", local: [22.469603, 121.302288] },
-        { id: 4, name: "大統百貨", local: [22.630748, 120.318033] }
-      ],
+      waterQualityData: [],
+      redDot,
       
       zoom: 8,
       center: [23.97565, 120.9738819],
@@ -64,7 +71,14 @@ export default {
       options: {
         zoomControl: false
       },
-      circle: {
+      blueCircle: {
+        radius: 10,
+        stroke: false,
+        color: 'none',
+        fillColor: '#1ea9e9',
+        fillOpacity: 0.6,
+      },
+      redCircle: {
         radius: 15,
         stroke: false,
         color: 'none',
@@ -73,7 +87,13 @@ export default {
       }
     };
   },
-  mounted() {
+  async mounted() {
+    try {
+      const res = await this.$api.map.getWaterQuality();
+      this.waterQualityData = res.search_result;
+    } catch (err) {
+      console.log(err);
+    }
   }
 };
 </script>
