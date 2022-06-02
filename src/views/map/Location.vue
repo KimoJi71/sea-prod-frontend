@@ -117,7 +117,7 @@ import MarkRed from "../../assets/icon_mark_red_4x.png";
 import Sea from "../../assets/icon_sea_4x.png";
 
 export default {
-  name: "AED",
+  name: "Location",
   data() {
     return {
       tags: [

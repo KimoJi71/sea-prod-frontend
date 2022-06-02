@@ -20,6 +20,16 @@ const routes = [
     component: () => import('@/views/map/AED.vue'),
   },
   {
+    path: '/weather/search',
+    name: 'Search',
+    component: () => import('@/views/weather/Search.vue'),
+  },
+  {
+    path: '/weather/result',
+    name: 'Result',
+    component: () => import('@/views/weather/Result.vue'),
+  },
+  {
     path: "*",
     redirect: { name: "Location" },
   },

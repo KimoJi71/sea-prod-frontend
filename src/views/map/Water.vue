@@ -58,7 +58,7 @@
 import redDot from "../../assets/icon_dot_red_4x.png";
 
 export default {
-  name: "AED",
+  name: "Water",
   data() {
     return {
       waterQualityData: [],
