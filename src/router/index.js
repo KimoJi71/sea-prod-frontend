@@ -30,6 +30,11 @@ const routes = [
     component: () => import('@/views/weather/Result.vue'),
   },
   {
+    path: '/crowd/search',
+    name: 'CrowdSearch',
+    component: () => import('@/views/crowd/Search.vue'),
+  },
+  {
     path: "*",
     redirect: { name: "Location" },
   },
