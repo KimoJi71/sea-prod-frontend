@@ -106,11 +106,15 @@
         </l-map>
       </v-col>
     </v-row>
+    
+    <Loading />
   </v-container>
 </template>
 
 <script>
 import dangerLocations from "../../assets/constant/dangerLocations";
+import Loading from "@/components/Loading.vue";
+import { mapMutations } from "vuex";
 
 import MarkBlack from "../../assets/icon_mark_black_4x.png";
 import MarkRed from "../../assets/icon_mark_red_4x.png";
@@ -118,6 +122,9 @@ import Sea from "../../assets/icon_sea_4x.png";
 
 export default {
   name: "Location",
+  components: {
+    Loading,
+  },
   data() {
     return {
       tags: [
@@ -158,20 +165,32 @@ export default {
   methods: {
     async getLocations(type) {
       try {
+        this.setLoadingStatus(null, { root: true });
+        this.setLoadingMsg("資料載入中...", { root: true });
         const res = await this.$api.map.getLocations(type);
         this.locationData = res.search_result;
+        this.setLoadingStatus(null, { root: true });
+        this.setLoadingMsg("", { root: true });
       } catch (err) {
         console.log(err);
       }
     },
     async getSeaLocations() {
       try {
+        this.setLoadingStatus(null, { root: true });
+        this.setLoadingMsg("資料載入中...", { root: true });
         const res = await this.$api.map.getSeaLocations();
         this.seaData = res.search_result;
+        this.setLoadingStatus(null, { root: true });
+        this.setLoadingMsg("", { root: true });
       } catch (err) {
         console.log(err);
       }
     },
+    ...mapMutations({
+      setLoadingStatus: "setLoadingStatus",
+      setLoadingMsg: "setLoadingMsg",
+    }),
   },
   watch: {
     type(val) {
@@ -181,8 +200,12 @@ export default {
   },
   async mounted() {
     try {
+      this.setLoadingStatus(null, { root: true });
+      this.setLoadingMsg("資料載入中...", { root: true });
       const res = await this.$api.map.getLocations("海水浴場");
       this.locationData = res.search_result;
+      this.setLoadingStatus(null, { root: true });
+      this.setLoadingMsg("", { root: true });
     } catch (err) {
       console.log(err);
     }

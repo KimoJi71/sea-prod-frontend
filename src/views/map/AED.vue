@@ -50,14 +50,22 @@
         </l-map>
       </v-col>
     </v-row>
+
+    <Loading />
   </v-container>
 </template>
 
 <script>
+import Loading from "@/components/Loading.vue";
+import { mapMutations } from "vuex";
+
 import AED from '../../assets/icon_AED_4x.png';
 
 export default {
   name: "AED",
+  components: {
+    Loading,
+  },
   data() {
     return {
       AEDData: [],
@@ -77,10 +85,20 @@ export default {
       }
     };
   },
+  methods: {
+    ...mapMutations({
+      setLoadingStatus: "setLoadingStatus",
+      setLoadingMsg: "setLoadingMsg",
+    }),
+  },
   async mounted() {
     try {
+      this.setLoadingStatus(null, { root: true });
+      this.setLoadingMsg("資料載入中...", { root: true });
       const res = await this.$api.map.getAED();
       this.AEDData = res.search_result;
+      this.setLoadingStatus(null, { root: true });
+      this.setLoadingMsg("", { root: true });
     } catch (err) {
       console.log(err);
     }

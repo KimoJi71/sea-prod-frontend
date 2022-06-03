@@ -29,10 +29,15 @@
         />
       </v-col>
     </v-row>
+
+    <Loading />
   </v-container>
 </template>
 
 <script>
+import Loading from "@/components/Loading.vue";
+import { mapMutations } from "vuex";
+
 import { Line as LineChartGenerator } from "vue-chartjs/legacy";
 import {
   Chart as ChartJS,
@@ -59,6 +64,7 @@ export default {
   name: "BlueRoadResult",
   components: {
     LineChartGenerator,
+    Loading,
   },
   props: {
     chartId: {
@@ -110,14 +116,24 @@ export default {
       },
     };
   },
+  methods: {
+    ...mapMutations({
+      setLoadingStatus: "setLoadingStatus",
+      setLoadingMsg: "setLoadingMsg",
+    }),
+  },
   async mounted() {
     this.route = localStorage.getItem("route");
     this.route_code = localStorage.getItem("route_code");
     const datetime = localStorage.getItem("datetime");
     try {
+      this.setLoadingStatus(null, { root: true });
+      this.setLoadingMsg("資料載入中...", { root: true });
       const res = await this.$api.blueroad.getBlueRoadResult(this.route, this.route_code, datetime);
       this.chartData.labels = res.search_result.map(item => this.$moment(item.Instant_time).format("MM/DD HH:mm"));
       this.chartData.datasets[0].data = res.search_result.map(item => item.Wave_height);
+      this.setLoadingStatus(null, { root: true });
+      this.setLoadingMsg("", { root: true });
     } catch (err) {
       console.log(err);
     }

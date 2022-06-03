@@ -111,14 +111,22 @@
         </div>
       </v-col>
     </v-row>
+
+    <Loading />
   </v-container>
 </template>
 
 <script>
+import Loading from "@/components/Loading.vue";
+import { mapMutations } from "vuex";
+
 import searchIcon from "../../assets/icon_search_2x.png";
 
 export default {
   name: "Result",
+  components: {
+    Loading,
+  },
   data() {
     return {
       results: [],
@@ -285,12 +293,20 @@ export default {
       const type = localStorage.getItem("type");
       const location = localStorage.getItem("location");
       try {
+        this.setLoadingStatus(null, { root: true });
+        this.setLoadingMsg("資料載入中...", { root: true });
         const res = await this.$api.recommend.getRecommend(location, type);
         this.recommendData = res;
+        this.setLoadingStatus(null, { root: true });
+        this.setLoadingMsg("", { root: true });
       } catch (err) {
         console.log(err);
       }
     },
+    ...mapMutations({
+      setLoadingStatus: "setLoadingStatus",
+      setLoadingMsg: "setLoadingMsg",
+    }),
   },
   watch: {
     dateType(val) {

@@ -51,14 +51,22 @@
         </div>
       </v-col>
     </v-row>
+
+    <Loading />
   </v-container>
 </template>
 
 <script>
+import Loading from "@/components/Loading.vue";
+import { mapMutations } from "vuex";
+
 import redDot from "../../assets/icon_dot_red_4x.png";
 
 export default {
   name: "Water",
+  components: {
+    Loading,
+  },
   data() {
     return {
       waterQualityData: [],
@@ -87,10 +95,20 @@ export default {
       }
     };
   },
+  methods: {
+    ...mapMutations({
+      setLoadingStatus: "setLoadingStatus",
+      setLoadingMsg: "setLoadingMsg",
+    }),
+  },
   async mounted() {
     try {
+      this.setLoadingStatus(null, { root: true });
+      this.setLoadingMsg("資料載入中...", { root: true });
       const res = await this.$api.map.getWaterQuality();
       this.waterQualityData = res.search_result;
+      this.setLoadingStatus(null, { root: true });
+      this.setLoadingMsg("", { root: true });
     } catch (err) {
       console.log(err);
     }
