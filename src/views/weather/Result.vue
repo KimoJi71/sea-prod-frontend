@@ -54,6 +54,16 @@
             :search="search"
             :loading="loading"
             height="350"
+            v-if="dateType !== '未來一週'"
+          ></v-data-table>
+          <v-data-table
+            fixed-header
+            :headers="headersOneWeek"
+            :items="results"
+            :search="search"
+            :loading="loading"
+            height="350"
+            v-else
           ></v-data-table>
         </v-card>
       </v-col>
@@ -166,6 +176,61 @@ export default {
           value: "Maximum_comfort_index",
         },
       ],
+      headersOneWeek: [
+        {
+          text: "類型",
+          value: "type",
+        },
+        {
+          text: "地點",
+          value: "location",
+        },
+        {
+          text: "時間",
+          sortable: true,
+          value: "Instant_time",
+        },
+        {
+          text: "平均溫度",
+          sortable: true,
+          value: "Average_temperature",
+        },
+        {
+          text: "平均相對濕度",
+          sortable: true,
+          value: "Average_relative_humidity",
+        },
+        {
+          text: "最低溫度",
+          sortable: true,
+          value: "Minimum_temperature",
+        },
+        {
+          text: "最高溫度",
+          sortable: true,
+          value: "Maximum_temperature",
+        },
+        {
+          text: "降雨機率",
+          sortable: true,
+          value: "Chance_of_rain",
+        },
+        {
+          text: "最大風速",
+          sortable: true,
+          value: "Maximum_wind_speed",
+        },
+        {
+          text: "天氣現象",
+          sortable: true,
+          value: "Weather_phenomenon",
+        },
+        {
+          text: "舒適度指數",
+          sortable: true,
+          value: "Maximum_comfort_index",
+        },
+      ],
       loading: false,
 
       // 推薦的資料
@@ -184,9 +249,26 @@ export default {
           res = await this.$api.search.getToday(location, type);
         } else if (dateType === "未來三天") {
           res = await this.$api.search.getThreeDay(location, type);
-        } else {
-          res = await this.$api.search.getOneWeek(location, type);
         }
+        const newDatas = res.search_result.map(item => {
+          item.Instant_time = this.$moment(item.Instant_time).subtract(8, "hours").format("YYYY-MM-DD HH:mm:ss");
+          item.type = type;
+          item.location = location;
+          return item;
+        });
+        this.results = newDatas;
+        this.loading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getDataOneWeek() {
+      const type = localStorage.getItem("type");
+      const location = localStorage.getItem("location");
+      try {
+        this.loading = true;
+        this.results = [];
+        const res = await this.$api.search.getOneWeek(location, type);
         const newDatas = res.search_result.map(item => {
           item.Instant_time = this.$moment(item.Instant_time).subtract(8, "hours").format("YYYY-MM-DD HH:mm:ss");
           item.type = type;
@@ -212,7 +294,8 @@ export default {
   },
   watch: {
     dateType(val) {
-      if (val !== "推薦日期") this.getData(val);
+      if (val !== "推薦日期" && val !== "未來一週") this.getData(val);
+      else if (val === "未來一週") this.getDataOneWeek();
       else this.getRecommend();
     },
   },
