@@ -124,7 +124,7 @@ export default {
       results: [],
       dateType: "當天",
       tags: ["當天", "未來三天", "未來一週", "推薦日期"],
-      search: '',
+      search: "",
       searchIcon,
       headers: [
         {

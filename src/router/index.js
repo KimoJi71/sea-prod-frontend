@@ -30,6 +30,16 @@ const routes = [
     component: () => import('@/views/weather/Result.vue'),
   },
   {
+    path: '/blueroad/search',
+    name: 'BlueRoadSearch',
+    component: () => import('@/views/blueRoad/Search.vue'),
+  },
+  {
+    path: '/blueroad/result',
+    name: 'BlueRoadResult',
+    component: () => import('@/views/blueRoad/Result.vue'),
+  },
+  {
     path: '/crowd/search',
     name: 'CrowdSearch',
     component: () => import('@/views/crowd/Search.vue'),

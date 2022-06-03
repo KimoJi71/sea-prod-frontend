@@ -3,7 +3,7 @@
     <v-row align="center">
       <v-col>
         <div class="title">
-          <h2>歷史人潮分析</h2>
+          <h2>歷史人潮統計</h2>
         </div>
       </v-col>
     </v-row>

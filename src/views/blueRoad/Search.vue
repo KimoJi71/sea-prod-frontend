@@ -3,41 +3,53 @@
     <v-row align="center">
       <v-col>
         <div class="title">
-          <h2>氣象及海象查詢</h2>
+          <h2>藍色公路</h2>
         </div>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="12">
         <div class="title">
-          <p class="primary--text" style="fontSize: 20px">請選擇類型</p>
-        </div>
-        <div class="ele">
-          <v-chip-group
-            v-model="type"
-            mandatory
-            active-class="primary"
-          >
-            <v-chip
-              v-for="tag in tags"
-              :key="tag"
-              :value="tag"
-            >
-              {{ tag }}
-            </v-chip>
-          </v-chip-group>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <div class="title">
-          <p class="primary--text" style="fontSize: 20px">請選擇地點</p>
+          <p class="primary--text" style="fontSize: 20px">請選擇航線</p>
         </div>
         <div class="ele">
           <v-select
-            v-model="location"
-            :items="locations[type]"
+            v-model="route"
+            :items="blueRoad"
+            label="請選擇"
+            outlined
+            dense
+            rounded
+          ></v-select>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <div class="title">
+          <p class="primary--text" style="fontSize: 20px">請選擇小航線</p>
+        </div>
+        <div class="ele">
+          <v-select
+            v-model="route_code"
+            :items="blueRoadRoute[route]"
+            label="請選擇"
+            outlined
+            dense
+            rounded
+          ></v-select>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <div class="title">
+          <p class="primary--text" style="fontSize: 20px">請選擇出發時間</p>
+        </div>
+        <div class="ele">
+          <v-select
+            v-model="datetime"
+            :items="dateSelection"
             label="請選擇"
             outlined
             dense
@@ -49,7 +61,7 @@
     <v-row>
       <v-col>
         <div class="ele">
-          <v-btn rounded color="primary" :disabled="!location" @click="search()">
+          <v-btn rounded color="primary" :disabled="!datetime" @click="search()">
             開始查詢&gt;&gt;
           </v-btn>
         </div>
@@ -59,31 +71,37 @@
 </template>
 
 <script>
-import locations from "../../assets/constant/locations";
+import { blueRoad, blueRoadRoute } from "../../assets/constant/blueroad";
 
 export default {
-  name: "Search",
+  name: "BlueRoadSearch",
   data() {
     return {
-      tags: [
-        "海水浴場",
-        "浮潛",
-        "港口",
-        "海釣",
-        "衝浪",
-        "娛樂漁業",
-      ],
-      type: "海水浴場",
-      locations,
-      location: null,
+      blueRoad,
+      blueRoadRoute,
+      route: null,
+      route_code: null,
+      dateSelection: [],
+      datetime: null
     };
   },
   methods: {
     search() {
-      localStorage.setItem("type", this.type);
-      localStorage.setItem("location", this.location);
-      this.$router.push({name: "Result"});
+      localStorage.setItem("route", this.route);
+      localStorage.setItem("route_code", this.route_code);
+      localStorage.setItem("datetime", this.datetime);
+      this.$router.push({name: "BlueRoadResult"});
     },
+  },
+  watch: {
+    route(val) {
+      this.route_code = blueRoadRoute[val][0];
+    },
+  },
+  mounted() {
+    for (let i = 0; i < 48; i++) {
+      this.dateSelection.push(`${this.$moment().add(i, "hours").format("YYYY/MM/DD HH:00:00")}`);
+    }
   },
 };
 </script>
