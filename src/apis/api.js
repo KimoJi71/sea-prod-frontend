@@ -1,6 +1,6 @@
 import axios from "axios";
 
-let baseURL = process.env.API_URL;
+import { baseURL } from "@/assets/constant/apiPath";
 
 const apiRequest = axios.create({
   baseURL,
