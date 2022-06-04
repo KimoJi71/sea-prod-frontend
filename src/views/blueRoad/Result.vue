@@ -140,6 +140,7 @@ export default {
             type: "linear",
             position: "right",
             ticks: {
+              stepSize: 2,
               callback: function(value) {
                 return value + "m/s";
               }
