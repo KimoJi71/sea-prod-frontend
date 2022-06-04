@@ -106,13 +106,50 @@ export default {
           {
             label: "浪高",
             backgroundColor: "#6E93BA",
+            borderColor: "#6E93BA",
+            yAxisID: "A",
+            data: []
+          },
+          {
+            label: "風速",
+            backgroundColor: "#FFC107",
+            borderColor: "#FFC107",
+            yAxisID: "B",
             data: []
           }
         ]
       },
       chartOptions: {
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
+        scales: {
+          A: {
+            type: "linear",
+            position: "left",
+            ticks: {
+              callback: function(value) {
+                return value + "m";
+              }
+            },
+            title: {
+              display: true,
+              text: '浪高'
+            },
+          }, 
+          B: {
+            type: "linear",
+            position: "right",
+            ticks: {
+              callback: function(value) {
+                return value + "m/s";
+              }
+            },
+            title: {
+              display: true,
+              text: '風速'
+            },
+          },
+        }
       },
     };
   },
@@ -130,8 +167,9 @@ export default {
       this.setLoadingStatus(null, { root: true });
       this.setLoadingMsg("資料載入中...", { root: true });
       const res = await this.$api.blueroad.getBlueRoadResult(this.route, this.route_code, datetime);
-      this.chartData.labels = res.search_result.map(item => this.$moment(item.Instant_time).format("MM/DD HH:mm"));
+      this.chartData.labels = res.search_result.map(item => this.$moment(item.Instant_time).subtract(8, "hours").format("MM/DD HH:mm"));
       this.chartData.datasets[0].data = res.search_result.map(item => item.Wave_height);
+      this.chartData.datasets[1].data = res.search_result.map(item => Number(item.Wind_speed));
       this.setLoadingStatus(null, { root: true });
       this.setLoadingMsg("", { root: true });
     } catch (err) {

@@ -45,7 +45,7 @@ export default {
       drawer: false,
       items: [
         { name: "水域地點地圖", href: "/map/location" },
-        { name: "水質監測地圖", href: "/map/water" },
+        { name: "水質狀況地圖", href: "/map/water" },
         { name: "AED地圖", href: "/map/AED" },
         { name: "氣象及海象查詢", href: "/weather/search" },
         { name: "藍色公路", href: "/blueroad/search" },

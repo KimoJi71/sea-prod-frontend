@@ -3,12 +3,12 @@
     <v-row align="center">
       <v-col cols="12">
         <div class="title">
-          <h2>全台水質監測</h2>
+          <h2>全台水質狀況</h2>
         </div>
       </v-col>
       <v-col>
         <div class="text-overline" style="display: flex; alignItem: center; float: right">
-          <img :src="redDot" width="32" height="32">
+          <img :src="markBad" width="32" height="32">
           水質超標
         </div>
       </v-col>
@@ -27,22 +27,24 @@
           <l-tile-layer :url="url" :attribution="attribution" />
 
           <!-- 創建標記點 -->
-          <l-circle-marker 
+          <l-marker 
             :lat-lng="[item.Lat, item.Lon]" 
-            :radius="item.Exceeded_items ? redCircle.radius: blueCircle.radius"
-            :color="item.Exceeded_items ? redCircle.color: blueCircle.color"
-            :fillColor="item.Exceeded_items ? redCircle.fillColor: blueCircle.fillColor"
-            :fillOpacity="item.Exceeded_items ? redCircle.fillOpacity: blueCircle.fillOpacity"
             v-for="item in waterQualityData" 
             :key="item.id"
           >
+            <l-icon
+              :icon-url="item.Exceeded_items ? icon.type.bad : icon.type.good"
+              :icon-size="icon.iconSize"
+              :icon-anchor="icon.iconAnchor"
+              :popup-anchor="icon.popupAnchor"
+            />
             <!-- 彈出視窗 -->
             <l-popup>
               <h3>{{item.Observation_site}}</h3>
               <p>水質達成率：{{item.Achievement_rate}}</p>
               <p>水質超標項目：{{item.Exceeded_items ? item.Exceeded_items : '無'}}</p>
             </l-popup>
-          </l-circle-marker>
+          </l-marker>
         </l-map>
       </v-col>
       <v-col>
@@ -60,7 +62,8 @@
 import Loading from "@/components/Loading.vue";
 import { mapMutations } from "vuex";
 
-import redDot from "../../assets/icon_dot_red_4x.png";
+import MarkGood from "../../assets/icon_good_4x.png";
+import MarkBad from "../../assets/icon_bad_4x.png";
 
 export default {
   name: "Water",
@@ -70,29 +73,25 @@ export default {
   data() {
     return {
       waterQualityData: [],
-      redDot,
+      markGood: MarkGood,
+      markBad: MarkBad,
       
       zoom: 8,
       center: [23.97565, 120.9738819],
-      url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-      attribution: `&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>`,
+      url: "https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png",
+      attribution: `&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors`,
       options: {
         zoomControl: false
       },
-      blueCircle: {
-        radius: 10,
-        stroke: false,
-        color: 'none',
-        fillColor: '#1ea9e9',
-        fillOpacity: 0.6,
+      icon: {
+        type: {
+          good: MarkGood,
+          bad: MarkBad,
+        },
+        iconSize: [36, 36],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
       },
-      redCircle: {
-        radius: 15,
-        stroke: false,
-        color: 'none',
-        fillColor: '#e91e3a',
-        fillOpacity: 0.6,
-      }
     };
   },
   methods: {

@@ -79,7 +79,12 @@
                 推薦1：
               </v-card-title>
               <v-card-text>
-                {{$moment(recommendData.search_result[0]["Recommended _time1"]).subtract(8, "hours").format("YYYY-MM-DD HH:mm:ss")}}
+                <p class="primary--text">
+                  時間：{{$moment(recommendData.search_result[0]["First_recommendation"]["Recommended_time"]).subtract(8, "hours").format("YYYY-MM-DD HH:mm:ss")}}
+                </p>
+                <p class="secondary--text mb-0">
+                  小提醒：{{recommendData.search_result[0]["First_recommendation"]["Recommended_hint"]}}
+                </p>
               </v-card-text>
             </v-card>
           </v-col>
@@ -89,7 +94,12 @@
                 推薦2：
               </v-card-title>
               <v-card-text>
-                {{$moment(recommendData.search_result[0]["Recommended _time2"]).subtract(8, "hours").format("YYYY-MM-DD HH:mm:ss")}}
+                <p class="primary--text">
+                  時間：{{$moment(recommendData.search_result[0]["Second recommendation"]["Recommended_time"]).subtract(8, "hours").format("YYYY-MM-DD HH:mm:ss")}}
+                </p>
+                <p class="secondary--text mb-0">
+                  小提醒：{{recommendData.search_result[0]["Second recommendation"]["Recommended_hint"]}}
+                </p>
               </v-card-text>
             </v-card>
           </v-col>
@@ -99,7 +109,12 @@
                 推薦3：
               </v-card-title>
               <v-card-text>
-                {{$moment(recommendData.search_result[0]["Recommended _time3"]).subtract(8, "hours").format("YYYY-MM-DD HH:mm:ss")}}
+                <p class="primary--text">
+                  時間：{{$moment(recommendData.search_result[0]["Third_recommendation"]["Recommended_time"]).subtract(8, "hours").format("YYYY-MM-DD HH:mm:ss")}}
+                </p>
+                <p class="secondary--text mb-0">
+                  小提醒：{{recommendData.search_result[0]["Third_recommendation"]["Recommended_hint"]}}
+                </p>
               </v-card-text>
             </v-card>
           </v-col>
@@ -328,5 +343,8 @@ export default {
 .ele {
   display: flex;
   justify-content: center;
+}
+.v-card {
+  border-radius: 20px !important;
 }
 </style>

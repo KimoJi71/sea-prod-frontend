@@ -41,7 +41,7 @@
           :zoom="zoom"
           :center="center"
           :options="options"
-          style="height: 55vh; borderRadius: 20px"
+          style="height: 48vh; borderRadius: 20px"
         >
           <l-tile-layer :url="url" :attribution="attribution" />
 
@@ -71,6 +71,9 @@
             </l-popup>
           </l-marker>
         </l-map>
+        <div class="text-body-2 mt-5">
+          資料時間：{{locationData[0] ? $moment(locationData[0].Instant_time).subtract(8, "hours").format("YYYY-MM-DD HH:mm"): ''}}
+        </div>
       </v-col>
 
       <v-col v-else>
@@ -143,8 +146,8 @@ export default {
       
       zoom: 8,
       center: [23.97565, 120.9738819],
-      url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-      attribution: `&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>`,
+      url: "https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png",
+      attribution: `&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors`,
       options: {
         zoomControl: false
       },
