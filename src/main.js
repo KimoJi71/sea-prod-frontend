@@ -10,7 +10,7 @@ import "@fortawesome/fontawesome-free/js/all.js";
 import moment from "moment";
 
 // 載入 vue2-leaflet，依照自己需要載入組件
-import { LMap, LTileLayer, LMarker, LCircleMarker, LPopup, LIcon } from "vue2-leaflet";
+import { LMap, LTileLayer, LMarker, LPopup, LIcon } from "vue2-leaflet";
 // 載入 css
 import "leaflet/dist/leaflet.css";
 
@@ -18,7 +18,6 @@ import "leaflet/dist/leaflet.css";
 Vue.component("l-map", LMap);
 Vue.component("l-tile-layer", LTileLayer);
 Vue.component("l-marker", LMarker);
-Vue.component("l-circle-marker", LCircleMarker);
 Vue.component("l-popup", LPopup);
 Vue.component("l-icon", LIcon);
 

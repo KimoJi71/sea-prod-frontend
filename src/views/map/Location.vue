@@ -82,7 +82,7 @@
           :zoom="zoom"
           :center="center"
           :options="options"
-          style="height: 65vh; borderRadius: 20px"
+          style="height: 55vh; borderRadius: 20px"
         >
           <l-tile-layer :url="url" :attribution="attribution" />
 
@@ -94,7 +94,7 @@
           >
             <l-icon
               :icon-url="icon.type.sea"
-              :icon-size="icon.iconSize"
+              :icon-size="icon.iconSeaSize"
               :icon-anchor="icon.iconAnchor"
               :popup-anchor="icon.popupAnchor"
             />
@@ -107,6 +107,9 @@
             </l-popup>
           </l-marker>
         </l-map>
+        <div class="text-body-2 mt-5">
+          資料時間：{{seaData[0] ? $moment(seaData[0].Instant_date).format("YYYY-MM-DD"): ''}}
+        </div>
       </v-col>
     </v-row>
     
@@ -157,6 +160,7 @@ export default {
           red: MarkRed,
           sea: Sea,
         },
+        iconSeaSize: [36, 36],
         iconSize: [48, 48],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
