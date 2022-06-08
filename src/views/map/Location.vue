@@ -101,7 +101,7 @@
             <l-popup>
               <h3>{{item.Observation_site}}</h3>
               <p>當日浪況：{{item.Wave_conditions}}</p>
-              <p>天氣現象：{{item.Weather_phenomeno}}</p>
+              <p>天氣現象：{{item.Weather_phenomenon}}</p>
               <hr>
               <p>日出日落時間：{{item.Sunrise}} / {{item.Sundown}}</p>
             </l-popup>
